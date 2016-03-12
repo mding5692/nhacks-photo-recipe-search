@@ -17,9 +17,9 @@ function getCredentials(cb) {
   });
 }
 
-function postImage(imgurl) {
+function postImage(imgUrl) {
   var data = {
-    'url': imgurl
+    'url': imgUrl
   };
   var accessToken = localStorage.getItem('accessToken');
 
@@ -30,8 +30,8 @@ function postImage(imgurl) {
     },
     'data': data,
     'type': 'POST'
-  }).then(function(r){
-    parseResponse(r);
+  }).then(function(res){
+    parseResponse(res);
   });
 }
 
@@ -48,13 +48,3 @@ function parseResponse(resp) {
   return tags;
 }
 
-function run(imgurl) {
-  if (localStorage.getItem('tokenTimeStamp') - Math.floor(Date.now() / 1000) > 86400
-    || localStorage.getItem('accessToken') === null) {
-    getCredentials(function() {
-      postImage(imgurl);
-    });
-  } else {
-    postImage(imgurl);
-  }
-}

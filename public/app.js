@@ -37,13 +37,69 @@
 ///////////////////////////// home.html
   app.controller('FoodSearchCtrl', function($scope, $http) {
 
-    var key = '529cd164050b80734aff7a59a2f7a0a3';
+    var foodKey = '529cd164050b80734aff7a59a2f7a0a3';
+    var accessToken = '1662953946.6f03efb.7b2b3221dc9747dda8a7cc2cfc8fd60e';
+    var userId = '1662953946';
+    $scope.foodPicUrl = null;
+    $scope.tags = [];
     $scope.results = null; 
+    $scope.recipeImages = null;
 
-    function foodSearch(tags) {
+    function getInstagramPics() {
+      var url = 'https://api.instagram.com/v1/users/self/media/recent/?access_token=' + accessToken;
+      $http.get(url)
+      .then(function(res) {
+        $scope.foodPicUrl = res.data[0].images.standard_resolution.url;
+      })
+      .catch(function(err) {
+        console.log(err);
+      });
 
-      var url = 'http://cors.io?u=http://www.food2fork.com/api/search?key=' + key;
+    };
+
+    function getCredentials(cb) {
+      var data = {
+        grant_type: 'client_credentials',
+        client_id:  'IQ_98zjxbSmn0syP7fok3dma73DfI1wjZ1TYQPjc',
+        client_secret: 'rNnsjLs4_2LdSKZ2fBVAVvlVyH5S4PeyHbgy2vHu'
+      };
+
+      return $.ajax({
+        'url': 'https://api.clarifai.com/v1/token',
+        'data': data,
+        'type': 'POST'
+      })
+      .then(function(r) {
+        localStorage.setItem('accessToken', r.access_token);
+        localStorage.setItem('tokenTimestamp', Math.floor(Date.now() / 1000));
+        cb();
+      });
+    };
+
+    function postImage(imgUrl) {
+      var data = {
+        'url': imgUrl
+      };
+      var accessToken = localStorage.getItem('accessToken');
+
+      return $.ajax({
+        'url': 'https://api.clarifai.com/v1/tag',
+        'headers': {
+          'Authorization': 'Bearer ' + accessToken
+        },
+        'data': data,
+        'type': 'POST'
+      }).then(function(res){
+        $scope.tags = res.results[0].result.tag.classes;
+        console.log($scope.tags);
+      });
+    }
+
+
+    function foodSearch() {
+      var url = 'http://cors.io?u=http://www.food2fork.com/api/search?key=' + foodKey;
       var urlTags = "";
+      var tags = $scope.tags;
 
       if (tags.length > 0) { 
         var i;
@@ -54,7 +110,6 @@
             urlTags = urlTags + '+' + tags[i];
           }
         }
-
         url = url + "&q=" + urlTags;
       }
 
@@ -63,21 +118,41 @@
         method: 'GET'
       }).then(function(response) {
         $scope.results = response;
-      }, function(err) {
+        for(var i = 0; i < response.data.count; i++) {
+          $scope.recipeImages.push(response.data.recipes[i].image_url);
+        }
+      })
+      .catch(function(err) {
         console.log(err);
       }); 
+    };
 
+    function run() {
+      getInstagramPics();
+      var url = $scope.foodPicUrl;
+      if (localStorage.getItem('tokenTimeStamp') - Math.floor(Date.now() / 1000) > 86400
+        || localStorage.getItem('accessToken') === null) {
+        getCredentials(function() {
+          postImage(url);
+        });
+      } else {
+        postImage(url);
+      }
+
+      foodSearch();
     }
 
-    // assuming we receives tags as a JSON array
-    $scope.food = foodSearch(['salmon', 'lemon']);
+
+
+    run();
+
   });
 //////////////////////// login.html
   app.controller('AuthCtrl', function($scope, $http, $window, $location) {
     var clientID = '6f03efb8494f4a79b2c5ee39e0642329';
     var clientSecret = '156c3e659ca448a09a832d5822294d91';
     var redirectURI = "http://localhost:3000/home";
-    var accessToken = "";
+    var accessToken = "1662953946.6f03efb.7b2b3221dc9747dda8a7cc2cfc8fd60e";
 
     $scope.authenticate = function() {
       var url = 'https://api.instagram.com/oauth/authorize/?client_id=' + clientID + "&redirect_uri=" + redirectURI + "&response_type=token";

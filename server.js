@@ -6,10 +6,10 @@ var morgan = require('morgan');
 var mongoose = require('mongoose');
 var router = express.Router();
 // var db = require('./model/database.js')
+var clarifai = require('./clarifai.js');
 
 var app = express();
 var api = express();
-var ig = require('instagram-node').instagram();
 
 var port = 3000;
 var api_port = 3001;
@@ -59,6 +59,9 @@ api.get('/', function(req, res, next) {
 	res.send("api works!");
 });
 
+api.get('/sendClarifaiRequest', function(req,res) {
+    
+});
 
 //////////////////////////////////////////////////////////////////
 app.listen(port, function() {
