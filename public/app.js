@@ -57,17 +57,14 @@
 
         url = url + "&q=" + urlTags;
       }
-     // $scope.results = url;
 
       $http({
         url: url,
         method: 'GET'
       }).then(function(response) {
-        //console.log(response.status);
-        //console.log(res.data);
         $scope.results = response;
-      }, function(response) {
-        console.log(response.body);
+      }, function(err) {
+        console.log(err);
       }); 
 
     }
@@ -85,8 +82,12 @@
     $scope.authenticate = function() {
       var url = 'https://api.instagram.com/oauth/authorize/?client_id=' + clientID + "&redirect_uri=" + redirectURI + "&response_type=token";
       $window.open(url, "_self");
-      var path = $location.path;
-      console.log(path);
+      
+      $scope.$on('$locationChangeSuccess',function(event, absNewUrl, absOldUrl){
+        var path = $location.path;
+        console.log('start', event, absNewUrl, absOldUrl);
+      });
+    
     };
   });
 
