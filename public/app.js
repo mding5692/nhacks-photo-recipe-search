@@ -44,10 +44,9 @@
 
     var foodKey = '529cd164050b80734aff7a59a2f7a0a3';
     var userId = '1662953946';
-    $scope.foodPicUrl = "asdf";
-    $scope.tags = [];
-    $scope.results = null; 
-    $scope.recipeImages = [];
+    $scope.foodPicUrl = "test";
+    $scope.tags = []; 
+    $scope.recipes = [];
 
     function getInstagramPics(callback) {
       var url = 'http://cors.io?u=https://api.instagram.com/v1/users/self/media/recent/?access_token=' + accessToken;
@@ -129,10 +128,7 @@
         url: url,
         method: 'GET'
       }).then(function(response) {
-        $scope.results = response;
-        for(var i = 0; i < response.data.count; i++) {
-          $scope.recipeImages.push(response.data.recipes[i].image_url);
-        }
+        $scope.recipes = response.data.recipes;
       })
       .catch(function(err) {
         console.log(err);
@@ -154,22 +150,7 @@
 
       foodSearch();
       });
-      /*
-      //var url = $scope.foodPicUrl;
-      //localStorage.setItem('foodPic', $scope.foodPicUrl);
-      if (localStorage.getItem('tokenTimeStamp') - Math.floor(Date.now() / 1000) > 86400
-        || localStorage.getItem('cToken') === null) {
-        getCredentials(function() {
-          console.log(localStorage.getItem('foodPic'));
-          //postImage();
-        });
-      } else {
-        console.log("scope foodpic: " + $scope.foodPicUrl);
-        //postImage();
-      }
-
-      foodSearch();
-      */
+    
     }
 
     run();
@@ -181,7 +162,7 @@
     var clientID = '6f03efb8494f4a79b2c5ee39e0642329';
     var clientSecret = '156c3e659ca448a09a832d5822294d91';
     var redirectURI = "http://localhost:3000/home";
-    var accessToken = "";//1662953946.6f03efb.7b2b3221dc9747dda8a7cc2cfc8fd60e";
+    var accessToken = "";
 
     $scope.authenticate = function() {
       var url = 'https://api.instagram.com/oauth/authorize/?client_id=' + clientID + "&redirect_uri=" + redirectURI + "&response_type=token";
