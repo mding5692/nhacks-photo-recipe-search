@@ -9,6 +9,7 @@ var router = express.Router();
 
 var app = express();
 var api = express();
+var ig = require('instagram-node').instagram();
 
 var port = 3000;
 var api_port = 3001;
@@ -43,10 +44,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 api.use(cors());
 
+
 app.get('/', function(req,res) {
     res.sendfile("public/index.html");
 });
-
 
 
 api.set('port', api_port);
