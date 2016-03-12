@@ -2,7 +2,7 @@
   
   var app = angular.module('nhacks',['ui.router', 'ngRoute']);
 
-  app.config(function ($routeProvider, $locationProvider, $stateProvider, $urlRouterProvider) {
+  app.config(function ($routeProvider, $locationProvider, $stateProvider, $httpProvider, $urlRouterProvider) {
     $routeProvider
       .when("/", {
         templateUrl: "landing.html",
@@ -21,21 +21,6 @@
     delete $httpProvider.defaults.headers.common['X-Requested-With'];
   });
 
-
-/*  var app = angular.module('nhacks',['ui.router']);
-
-  app.config(function($stateProvider, $urlRouterProvider, $httpProvider) {
-    $stateProvider
-      .state('home', {
-        url:'/',
-        templateUrl: '/index.html',
-        controller: "FoodSearchCtrl"
-      });
-
-      $urlRouterProvider.otherwise('home');
-      delete $httpProvider.defaults.headers.common['X-Requested-With'];
-  });*/
-
   app.filter('capitalize', function() {
     return function(input) {
       return (!!input) ? input.charAt(0).toUpperCase() + input.substr(1).toLowerCase() : '';
@@ -49,7 +34,8 @@
 
   });
 
-  app.controller('FoodSearchCtrl', function($scope, $http){
+///////////////////////////// home.html
+  app.controller('FoodSearchCtrl', function($scope, $http) {
 
     var key = '529cd164050b80734aff7a59a2f7a0a3';
     $scope.results = null; 
@@ -89,16 +75,20 @@
     // assuming we receives tags as a JSON array
     $scope.food = foodSearch(['salmon', 'lemon']);
   });
-
-  app.controller('AuthCtrl', function($scope, $http) {
+//////////////////////// login.html
+  app.controller('AuthCtrl', function($scope, $http, $window, $location) {
     var clientID = '6f03efb8494f4a79b2c5ee39e0642329';
     var clientSecret = '156c3e659ca448a09a832d5822294d91';
-    var redirectURI = "http://localhost:3000/auth";
+    var redirectURI = "http://localhost:3000/home";
+    var accessToken = "";
 
     $scope.authenticate = function() {
       var url = 'https://api.instagram.com/oauth/authorize/?client_id=' + clientID + "&redirect_uri=" + redirectURI + "&response_type=token";
-      $location.url(url);
+      $window.open(url, "_self");
+      var path = $location.path;
+      console.log(path);
     };
   });
+
 
 })()
