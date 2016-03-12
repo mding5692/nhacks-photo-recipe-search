@@ -5,8 +5,7 @@ var sassMiddleware = require('node-sass-middleware');
 var morgan = require('morgan');
 var mongoose = require('mongoose');
 var router = express.Router();
-var db = require('./model/database.js')
-var yelpSearch = require('./yelpSearch.js');
+// var db = require('./model/database.js')
 
 var app = express();
 var api = express();
