@@ -1,8 +1,8 @@
 function getCredentials(cb) {
   var data = {
     grant_type: 'client_credentials',
-    client_id: CLIENT_ID,
-    client_secret: CLIENT_SECRET
+    client_id:  'IQ_98zjxbSmn0syP7fok3dma73DfI1wjZ1TYQPjc',
+    client_secret: 'rNnsjLs4_2LdSKZ2fBVAVvlVyH5S4PeyHbgy2vHu'
   };
 
   return $.ajax({
