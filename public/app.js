@@ -41,20 +41,27 @@
 
   app.controller('FoodSearchCtrl', function($scope, $http){
 
-    $scope.results = null;
-    $scope.foodSearch = function() {
-      var url = 'http://cors.io?u=http://www.food2fork.com/api/search?key=529cd164050b80734aff7a59a2f7a0a3&q=salmon';
+    var key = '529cd164050b80734aff7a59a2f7a0a3';
+    $scope.results = null; 
 
-/*
-      $.ajax({
-        url: url,
-        type: 'GET',
-        dataType: 'json',
-      }).done(function(response) {
-        console.log(response);
-        $scope.results = response;
-      });
-      */
+    function foodSearch(tags) {
+
+      var url = 'http://cors.io?u=http://www.food2fork.com/api/search?key=' + key;
+      var urlTags = "";
+
+      if (tags.length > 0) { 
+        var i;
+        for (i = 0; i < tags.length; i++) {
+          if (i == 0) {
+            urlTags = tags[i];
+          } else {
+            urlTags = urlTags + '+' + tags[i];
+          }
+        }
+
+        url = url + "&q=" + urlTags;
+      }
+     // $scope.results = url;
 
       $http({
         url: url,
@@ -67,7 +74,10 @@
         console.log(response.body);
       }); 
 
-    };
+    }
+
+    // assuming we receives tags as a JSON array
+    $scope.food = foodSearch(['salmon', 'lemon']);
   });
 
 
