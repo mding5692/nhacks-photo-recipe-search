@@ -4,11 +4,7 @@
 
   app.config(function ($routeProvider, $locationProvider, $stateProvider, $httpProvider, $urlRouterProvider) {
     $routeProvider
-      .when("/", {
-        templateUrl: "landing.html",
-        controller: "IndexCtrl"
-      })
-      .when("/login", {
+      .when("/login",{
         templateUrl: "login.html",
         controller: "IndexCtrl"
       })
@@ -38,7 +34,7 @@
   });
 
 ///////////////////////////// home.html
-  app.controller('FoodSearchCtrl', function($scope, $http, $location, accessTokens) {
+  app.controller('FoodSearchCtrl', function($scope, $http, $location, $q, accessTokens) {
     var tokenList = $location.url().split("=");
     var accessToken = tokenList[1];
 
@@ -48,51 +44,66 @@
     $scope.tags = []; 
     $scope.recipes = [];
 
-    function getInstagramPics(callback) {
+    function getInstagramPics() {
+      var deferred = $q.defer();
+
       var url = 'http://cors.io?u=https://api.instagram.com/v1/users/self/media/recent/?access_token=' + accessToken;
       $http.get(url)
       .then(function(res) {
         $scope.foodPicUrl = res.data.data[0].images.standard_resolution.url;
-        console.log("asdf: " + $scope.foodPicUrl);
         localStorage.setItem('foodPic', res.data.data[0].images.standard_resolution.url);
-        console.log(res.data.data[0].images.standard_resolution.url);
-        callback();
+
+        deferred.resolve(res.data.data[0].images.standard_resolution.url);
       })
       .catch(function(err) {
         console.log(err);
       });
 
+      return deferred.promise;
+
     };
 
-    function getCredentials(cb) {
-      var data = {
-        grant_type: 'client_credentials',
-        client_id:  'IQ_98zjxbSmn0syP7fok3dma73DfI1wjZ1TYQPjc',
-        client_secret: 'rNnsjLs4_2LdSKZ2fBVAVvlVyH5S4PeyHbgy2vHu'
-      };
+    function getCredentials() {
 
-      return $.ajax({
-        'url': 'https://api.clarifai.com/v1/token',
-        'data': data,
-        'type': 'POST'
-      })
-      .then(function(r) {
-        localStorage.setItem('cToken', r.access_token);
-        localStorage.setItem('tokenTimestamp', Math.floor(Date.now() / 1000));
-        cb();
-      });
+      var deferred = $q.defer();
+      
+      if (localStorage.getItem('tokenTimeStamp') - Math.floor(Date.now() / 1000) > 86400
+        || localStorage.getItem('cToken') === null) {
+           
+        var data = {
+          grant_type: 'client_credentials',
+          client_id:  'IQ_98zjxbSmn0syP7fok3dma73DfI1wjZ1TYQPjc',
+          client_secret: 'rNnsjLs4_2LdSKZ2fBVAVvlVyH5S4PeyHbgy2vHu'
+        };
+
+        $.ajax({
+          'url': 'https://api.clarifai.com/v1/token',
+          'data': data,
+          'type': 'POST'
+        }).then(function(r) {
+          deferred.resolve(r.access_token);
+          localStorage.setItem('cToken', r.access_token);
+          localStorage.setItem('tokenTimestamp', Math.floor(Date.now() / 1000));
+        });
+      } else {
+        deferred.resolve(localStorage.getItem('cToken'));
+      }
+
+      return deferred.promise;
+
     };
 
-    function postImage(imgUrl) {
+    function postImage(imgUrl, cToken) {
+      var deferred = $q.defer();
+
       var data = {
         'url': imgUrl
       };
 
-      var cToken = localStorage.getItem('cToken');
       console.log("ACCESS : " + cToken);
       console.log("imgUrl : " + imgUrl);
 
-      return $.ajax({
+      $.ajax({
         'url': 'https://api.clarifai.com/v1/tag',
         'headers': {
           'Authorization': 'Bearer ' + cToken
@@ -100,55 +111,52 @@
         'data': data,
         'type': 'POST'
       }).then(function(res){
-        $scope.tags = res.results[0].result.tag.classes;
-        console.log($scope.tags);
+        deferred.resolve(res.results[0].result.tag.classes);
       });
+
+      return deferred.promise;
       
     }
 
+    function foodSearch(tags) {
+      var deferred = $q.defer();
 
-    function foodSearch() {
-      var url = 'http://cors.io?u=http://www.food2fork.com/api/search?key=' + foodKey;
+      var url = 'http://www.food2fork.com/api/search?key=' + foodKey;
       var urlTags = "";
-      var tags = $scope.tags;
+      console.log("tags : " + tags);
 
-      if (tags.length > 0) { 
-        var i;
-        for (i = 0; i < tags.length; i++) {
-          if (i == 0) {
-            urlTags = tags[i];
-          } else {
-            urlTags = urlTags + '+' + tags[i];
-          }
-        }
-        url = url + "&q=" + urlTags;
-      }
+      urlTags = encodeURI(tags);
+      console.log("food2fork: " + urlTags);
 
       $http({
-        url: url,
+        url: 'http://localhost:3000/f2frequest?data=' + urlTags,
         method: 'GET'
       }).then(function(response) {
+        console.log(response);
         $scope.recipes = response.data.recipes;
-      })
-      .catch(function(err) {
-        console.log(err);
-      }); 
-    };
+        deferred.resolve(response);
+      });
+
+      return deferred.promise;
+    }
 
     function run() {
-      getInstagramPics(function() {
-        if (localStorage.getItem('tokenTimeStamp') - Math.floor(Date.now() / 1000) > 86400
-        || localStorage.getItem('cToken') === null) {
-        getCredentials(function() {
-          console.log(localStorage.getItem('foodPic'));
-          postImage($scope.foodPicUrl);
-        });
-      } else {
-        console.log("scope foodpic: " + $scope.foodPicUrl);
-        postImage($scope.foodPicUrl);
-      }
+      var promise = getInstagramPics();
 
-      foodSearch();
+      promise.then(function(instaUrl) {
+        console.log("insta url : " + instaUrl);
+
+        var promiseA = getCredentials().then(function(cToken) {
+          console.log("CTOKEN : " + cToken);
+
+          postImage(instaUrl, cToken).then(function(cData) {
+            console.log("CDATA : " + cData);
+            foodSearch(cData).then(function(response) {
+              console.log("foodsearch : " + response);
+            });
+          });
+        });
+
       });
     
     }

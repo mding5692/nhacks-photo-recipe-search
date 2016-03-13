@@ -5,8 +5,7 @@ var sassMiddleware = require('node-sass-middleware');
 var morgan = require('morgan');
 var mongoose = require('mongoose');
 var router = express.Router();
-// var db = require('./model/database.js')
-var clarifai = require('./clarifai.js');
+var request = require('request');
 
 var app = express();
 var api = express();
@@ -14,15 +13,7 @@ var api = express();
 var port = 3000;
 var api_port = 3001;
 
-
 //////////////////////////////////////////////////////////////////
-/*mongoose.connect('mongodb://admin:qhacks@ds060968.mlab.com:60968/tripninja', function(err){
-    if(err) {
-        console.log('db connection error', err);
-    } else {
-        console.log('db connection successful');
-    }
-});*/
 
 app.use(sassMiddleware({
     src: __dirname + '/public/',
@@ -35,19 +26,11 @@ app.use(sassMiddleware({
 app.set('port', process.env.PORT || port);
 app.use(morgan('dev')); // log every request to the console
 app.use(express.static(__dirname + "/public"));
-app.use('/*', function(req, res) {
-    res.sendFile(__dirname + '/public/index.html');
-});
     
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 api.use(cors());
-
-
-app.get('/', function(req,res) {
-    res.sendfile("public/index.html");
-});
 
 
 api.set('port', api_port);
@@ -59,9 +42,27 @@ api.get('/', function(req, res, next) {
 	res.send("api works!");
 });
 
-api.get('/sendClarifaiRequest', function(req,res) {
+app.get("/f2frequest", function(req, res) {
+    var url = 'http://www.food2fork.com/api/search?key=529cd164050b80734aff7a59a2f7a0a3';
     
+    
+    if (req.query && req.query.data) {
+        console.log(req.query.data)
+        url = url + "&q=" + req.query.data;
+    }
+
+    console.log(url);
+
+    request.get(url, function(error, response, body){
+        res.type('json');
+        res.send(body);
+    });
 });
+
+app.use('/*', function(req, res) {
+    res.sendFile(__dirname + '/public/index.html');
+});
+
 
 //////////////////////////////////////////////////////////////////
 app.listen(port, function() {
@@ -71,5 +72,3 @@ app.listen(port, function() {
 api.listen(api_port, function(){
 	console.log('api on port: '+ api_port);
 });
-
-
