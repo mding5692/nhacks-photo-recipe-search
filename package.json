@@ -1,18 +1,21 @@
 {
   "name": "nhacks-photo-recipe-search",
   "version": "0.0.1",
+  "description": "Takes photo of food and searches for recipe",
   "private": false,
+  "repository" : { 
+    "type" : "git", 
+    "url" : "https://github.com/mding5692/nhacks-photo-recipe-search"
+  },
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node server.js"
   },
   "dependencies": {
     "bcrypt": "^0.8.5",
     "body-parser": "~1.10.1",
-    "cheerio": "^0.20.0",
     "cookie-parser": "~1.3.3",
     "cors": "^2.7.1",
     "debug": "~2.1.1",
-    "ejs": "~2.1.4",
     "express": "~4.11.0",
     "mongo-express": "*",
     "mongodb": "^2.1.0",
@@ -20,10 +23,6 @@
     "morgan": "~1.5.1",
     "node-sass-middleware": "^0.9.7",
     "node-yelp": "0.0.3",
-    "request": "^2.69.0",
-    "serve-favicon": "~2.2.0"
-  },
-  "scripts": {
-    "start": "node server.js"
+    "request": "^2.69.0"
   }
 }

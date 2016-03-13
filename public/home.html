@@ -1,0 +1,9 @@
+<p> Welcome </p>
+
+<div ng-controller="FoodSearchCtrl">
+	<div ng-repeat="recipe in recipes">
+		<img ng-src="{{recipe.image_url}}">
+		<h2><a href="{{recipe.source_url}}">{{recipe.title}}</a></h2>
+	</div>
+
+</div>
