@@ -6,7 +6,7 @@ var morgan = require('morgan');
 var mongoose = require('mongoose');
 var router = express.Router();
 var request = require('request');
-var serveStatic = require('serve-static');
+var dict = require('./json/dict.json');
 
 var app = express();
 var api = express();
@@ -43,14 +43,36 @@ api.get('/', function(req, res, next) {
 	res.send("api works!");
 });
 
-app.use(serveStatic('json'));
-
 app.get("/f2frequest", function(req, res) {
     var url = 'http://www.food2fork.com/api/search?key=529cd164050b80734aff7a59a2f7a0a3';
     
+    var meats = false;
+
     if (req.query && req.query.data) {
-        console.log(req.query.data)
-        url = url + "&q=" + req.query.data;
+        console.log(req.query.data);
+
+        var tags = req.query.data.split(',');
+        console.log(tags);
+        var arr = [];
+
+        for (var i = 0; i < tags.length; i++) {
+            if (typeof dict[tags[i]] == 'undefined') {
+
+                if (tags[i] == "beef" || tags[i] == "pork" || tags[i] == "lamb" || tags[i] == "chicken") {
+                    if (!meats) {
+                        arr.push(tags[i]);
+                        meats = true;
+                    }
+                } else {    
+                    arr.push(tags[i]);
+                }
+            }
+        }
+        console.log(arr);
+        var newTags = arr.join(',');
+        console.log(newTags);
+        url = url + "&q=" + newTags;
+        console.log(url);
     }
 
     console.log(url);
@@ -61,15 +83,6 @@ app.get("/f2frequest", function(req, res) {
     });
 });
 
-/*
-app.get("/dict", function(req, res) {
-    request.get('/json/dict.json', function(error, response, body) {
-        res.type('json');
-        console.log("dict : " + body);
-        res.send(body);
-    })
-})
-*/
 app.use('/*', function(req, res) {
     res.sendFile(__dirname + '/public/index.html');
 });

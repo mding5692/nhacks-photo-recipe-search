@@ -118,28 +118,12 @@
       
     }
 
-    function getDict() {
-      var deferred = $q.defer();
-
-      $http({
-        url: 'http://localhost:3000/dict',
-        method: 'GET'
-      }).then(function(response) {
-        console.log(response);
-        deferred.resolve(response);
-      });
-
-      return deferred.promise;
-    }
-
     function foodSearch(tags) {
       var deferred = $q.defer();
 
       var url = 'http://www.food2fork.com/api/search?key=' + foodKey;
       var urlTags = "";
       console.log("tags : " + tags);
-
-      getDict();
 
       urlTags = encodeURI(tags);
       console.log("food2fork: " + urlTags);
