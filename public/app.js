@@ -4,7 +4,7 @@
 
   app.config(function ($routeProvider, $locationProvider, $stateProvider, $httpProvider, $urlRouterProvider) {
     $routeProvider
-      .when("/login",{
+      .when("/",{
         templateUrl: "login.html",
         controller: "IndexCtrl"
       })
