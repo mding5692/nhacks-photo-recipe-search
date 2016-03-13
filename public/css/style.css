@@ -1,29 +1,59 @@
-.container { position:relative; padding:0 0 0 55px; }
-
-#sidebar {
-	position:relative;
-	width:12%;
-	height: auto;
-	background:#000;
-	display: inline-block;
+html {
+	background: none;
+	overflow-x: hidden;
+	overflow-y: hidden;
 }
 
-#main {
-	position: relative;
-	border: 1px solid #000;
-	width: 80%;
-	height: auto;
-	display: inline-block;
+.signUpInput, #login-button {
+	display: block;
+	margin: 10px;
+	margin-top: 25px;
+	margin-left: 266px;
 }
 
-.soft-button {
-	border-radius: 15px;
-	border: none;
-    background-color: #73AD21;
-    padding: 15px 32px; 
-    text-decoration: none;
-    color: white;
-    font-size: 16px;
-    display: inline-block;
-    text-align: center;
+.fixed-size {
+
+	max-width: 100px;
+}
+
+footer {
+
+}
+
+.signUpInput {
+   padding: 2px;
+   font-size: 16px;
+   background: white;
+   border: 2px solid #333;
+   border-radius: 4px;
+   -webkit-box-shadow: inset 0 -2px #EBEBEB;
+   box-shadow: inset 0 -2px #EBEBEB;
+}
+
+#login-button {
+	padding: 5px;
+	padding-left: 10px;
+	padding-right:10px;
+	margin-left:330px;
+	color: white;
+   text-align: center;
+   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+   background: #F0776C;
+   border: 0;
+   border-bottom: 2px solid #D76B60;
+   border-radius: 5px;
+   cursor: pointer;
+   -webkit-box-shadow: inset 0 -2px #D76B60;
+   box-shadow: inset 0 -2px #D76B60;
+}
+
+#login-box {
+	background: no-repeat;
+	background-image: url("../img/login-box.png");
+	width: 100%;
+	height: 600px;
+	position: absolute;
+	top:25%;
+	left: 30%;
+	padding: 20px;
 }

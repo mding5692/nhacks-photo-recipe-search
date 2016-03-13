@@ -1,21 +1,47 @@
-<html>
-<head>
-<title>home</title>
-<link rel="stylesheet" type="text/css" href="css/style.css">
-</head>
+	   
+	<link rel='stylesheet' type='text/css' href='css/main.css' />
+	<!-- Wrapper -->
+	<div id="wrapper">
 
-<div class="container">
-	<div id="sidebar">
+				<!-- Intro -->
+					<section id="intro" class="wrapper style1 fullscreen fade-up">
+						<div class="inner">
+							<h1>Visousal Chef</h1>
+							<p>We've got recipes for all your foodie dreams.</p>
+							<ul class="actions">
+								<li><a href="" class="button scrolly">Scroll down</a></li>
+							</ul>
+						</div>
+	</section>
+
+	<div ng-controller="SideBarCtrl" id="sidebar">
 		<button class="soft-button">Instagram</button>
 		<button class="soft-button">Pinterest</button>
 		<button class="soft-button">Favourites</button>
+		<button ng-click="fade()" ng-hide="fade == true" ng-repeat="tag in foodTags">
+			{{tag}}
+		</button>
 	</div>	
-	<div id="main" ng-controller="FoodSearchCtrl">
-		<div ng-repeat="recipe in recipes">
-			<img ng-src="{{recipe.image_url}}">
-			<h2><a href="{{recipe.source_url}}">{{recipe.title}}</a></h2>
-		</div>
-	</div>
-</div>
+	<section id="one" class="wrapper style2 spotlights">	
+		<div id="main" ng-controller="FoodSearchCtrl">
+			<div ng-repeat="recipe in recipes">
+				<img class="image" style="background-position: 50% 0%;"ng-src="{{recipe.image_url}}">
 
-</html>
+						<h4>
+						<a href="{{recipe.source_url}}">					
+						<div ng-class="content">
+						<div ng-class="inner">{{recipe.title}}</a>						
+						</div>
+					</div>
+				</h4>
+				<br>
+			</div>
+		</div>
+	</section>
+    <footer id="footer" class="wrapper style1-alt">
+        <div class="inner">
+          <ul class="menu">
+            <li>&copy; NHacks</li>
+          </ul>
+        </div>
+      </footer>

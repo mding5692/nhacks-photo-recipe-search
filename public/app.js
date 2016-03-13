@@ -42,6 +42,13 @@
 
   });
 
+/////////////////////////////////// For the sidebar
+
+  app.controller('SideBarCtrl', function($scope, foodTags) {
+    $scope.foodTags = foodTags;
+  })
+
+
 ///////////////////////////// home.html
   app.controller('FoodSearchCtrl', function($scope, $http, $location, $q, accessTokens, scrapedIngredients, foodTags) {
     var tokenList = $location.url().split("=");

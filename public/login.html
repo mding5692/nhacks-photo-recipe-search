@@ -1,7 +1,11 @@
-<h3>Login with Instagram</h3>
+<link rel='stylesheet' type='text/css' href='css/style.css' />
+<div id="video-background">
+		<div id="login-box" ng-controller="AuthCtrl">
+			<form class="signUp" id="signupForm">
+			   <input type="text" class="signUpInput" placeholder="Type your username" autofocus required>
+			   <input type="password" class="signUpInput" placeholder="Type your password" required>
+			   <button id="login-button"  ng-click="authenticate()">Login</button>
+			</form>
 
-<div ng-controller="AuthCtrl">
-	<button ng-click="authenticate()">Login</button>
-
-
+		</div>
 </div>
