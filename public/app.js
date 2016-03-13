@@ -11,6 +11,10 @@
       .when("/home", {
         templateUrl: "home.html",
         controller: "IndexCtrl"
+      })
+      .when("/recipe/*", {
+        templateUrl: "element.html",
+        controller: "IndexCtrl"
       });
 
     $locationProvider.html5Mode(true);
@@ -45,7 +49,7 @@
 /////////////////////////////////// For the sidebar
 
   app.controller('SideBarCtrl', function($scope, foodTags) {
-    $scope.foodTags = foodTags;
+    $scope.tags = foodTags;
   })
 
 
@@ -151,7 +155,6 @@
         console.log(response);
         var body = JSON.parse(response.data.body);
         $scope.recipes = body.recipes;
-        foodTags = response.data.body.tags;
         deferred.resolve(body);
       });
 
@@ -198,7 +201,7 @@
           return postImage(instaUrl, cToken);
         }).then(function(cData) {
           console.log("CDATA : " + cData);
-          foodTags = cData;
+          foodTags = foodSearch(cData);
           return foodSearch(cData);
         }).then(function(response){
           console.log("Foodsearch : " + response)
