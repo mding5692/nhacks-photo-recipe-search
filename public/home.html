@@ -1,5 +1,7 @@
 	   
 	<link rel='stylesheet' type='text/css' href='css/main.css' />
+<div ng-controller="FoodSearchCtrl">		
+
 	<!-- Wrapper -->
 	<div id="wrapper">
 
@@ -14,14 +16,20 @@
 						</div>
 	</section>
 
-	<div ng-controller="SideBarCtrl" id="sidebar">
+	<div id="sidebar">
 		<button class="soft-button">Instagram</button>
-		<button ng-href="https://www.pinterest.com/search/pins/?q=food&rs=typed&0=food%7Ctyped" class="soft-button">Pinterest</button>
-		<button ng-href="/map" class="soft-button">Map Groceries!</button>
-		<button ng-repeat="tag in tags">{{tag}}</button>
+		<button ng-href="https://www.pinterest.com/search/pins/?q=food&rs=typed&0=food%7Ctyped" target="_self" class="soft-button">Pinterest</button>
+		<button ng-href="/map" target="_self" class="soft-button">Map Groceries!</button>
+			<hr>
+		<ul style="list-style-type: none;">
+			<li style="text-align:center;" ng-repeat="tag in fTags">{{tag}}</li>
+		</ul>
+		<hr>
+
 	</div>	
 	<section id="one" class="wrapper style2 spotlights">	
-		<div id="main" ng-controller="FoodSearchCtrl">
+		
+		<div id="main">
 			<div ng-repeat="recipe in recipes">
 				<img class="image" style="background-position: 50% 0%;"ng-src="{{recipe.image_url}}">
 
@@ -43,3 +51,4 @@
           </ul>
         </div>
       </footer>
+    </div>

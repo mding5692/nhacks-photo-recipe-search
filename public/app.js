@@ -46,22 +46,16 @@
 //////////////////////////////////////////////////////////////////////////////////////
   
  app.controller('IndexCtrl', function($rootScope, $scope, $routeParams, $http, foodTags, scrapedIngredients){
-  $scope.tags = foodTags;
+  $scope.fTags = foodTags;
   $scope.ingredients = scrapedIngredients;
 
   });
-
-/////////////////////////////////// For the sidebar
-
-  app.controller('SideBarCtrl', function($scope, foodTags) {
-    $scope.tags = foodTags;
-  })
-
 
 ///////////////////////////// home.html
   app.controller('FoodSearchCtrl', function($scope, $http, $location, $q, accessTokens, scrapedIngredients, foodTags) {
     var tokenList = $location.url().split("=");
     var accessToken = tokenList[1];
+    $scope.fTags = foodTags;
 
     var foodKey = '529cd164050b80734aff7a59a2f7a0a3';
     var userId = '1662953946';
@@ -157,10 +151,15 @@
         url: 'http://localhost:3000/f2frequest?data=' + urlTags,
         method: 'GET'
       }).then(function(response) {
-        console.log(response);
+        console.log("Response: "+response);
         var body = JSON.parse(response.data.body);
+        //var tags = JSON.parse(response.data.tags);
         $scope.recipes = body.recipes;
-        deferred.resolve(body);
+        var obj = {
+          body: body,
+          tags : tags
+        }
+        deferred.resolve(obj);
       });
 
       return deferred.promise;
@@ -206,10 +205,10 @@
           return postImage(instaUrl, cToken);
         }).then(function(cData) {
           console.log("CDATA : " + cData);
-          foodTags = foodSearch(cData);
           return foodSearch(cData);
         }).then(function(response){
           console.log("Foodsearch : " + response)
+          $scope.fTags = response.tags;
           deferred.resolve(response);
         });
       });
@@ -219,7 +218,7 @@
 
 
     run().then(function(res) {
-      scrapeUrls(res);
+      scrapeUrls(res.body);
     });
 
   });
@@ -235,6 +234,13 @@
       var url = 'https://api.instagram.com/oauth/authorize/?client_id=' + clientID + "&redirect_uri=" + redirectURI + "&response_type=token";
       $window.open(url, "_self");
     };
+  });
+
+
+////////////////////// element.html
+
+  app.controller('RecipeCtrl', function($scope, $location, scrapedIngredients) {
+
   });
 
 
