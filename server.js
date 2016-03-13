@@ -6,6 +6,7 @@ var morgan = require('morgan');
 var mongoose = require('mongoose');
 var router = express.Router();
 var request = require('request');
+var serveStatic = require('serve-static');
 
 var app = express();
 var api = express();
@@ -42,9 +43,10 @@ api.get('/', function(req, res, next) {
 	res.send("api works!");
 });
 
+app.use(serveStatic('json'));
+
 app.get("/f2frequest", function(req, res) {
     var url = 'http://www.food2fork.com/api/search?key=529cd164050b80734aff7a59a2f7a0a3';
-    
     
     if (req.query && req.query.data) {
         console.log(req.query.data)
@@ -59,6 +61,15 @@ app.get("/f2frequest", function(req, res) {
     });
 });
 
+/*
+app.get("/dict", function(req, res) {
+    request.get('/json/dict.json', function(error, response, body) {
+        res.type('json');
+        console.log("dict : " + body);
+        res.send(body);
+    })
+})
+*/
 app.use('/*', function(req, res) {
     res.sendFile(__dirname + '/public/index.html');
 });

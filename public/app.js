@@ -118,12 +118,28 @@
       
     }
 
+    function getDict() {
+      var deferred = $q.defer();
+
+      $http({
+        url: 'http://localhost:3000/dict',
+        method: 'GET'
+      }).then(function(response) {
+        console.log(response);
+        deferred.resolve(response);
+      });
+
+      return deferred.promise;
+    }
+
     function foodSearch(tags) {
       var deferred = $q.defer();
 
       var url = 'http://www.food2fork.com/api/search?key=' + foodKey;
       var urlTags = "";
       console.log("tags : " + tags);
+
+      getDict();
 
       urlTags = encodeURI(tags);
       console.log("food2fork: " + urlTags);
@@ -141,24 +157,19 @@
     }
 
     function run() {
-      var promise = getInstagramPics();
 
-      promise.then(function(instaUrl) {
+      getInstagramPics()
+      .then( function(instaUrl) {
         console.log("insta url : " + instaUrl);
-
-        var promiseA = getCredentials().then(function(cToken) {
-          console.log("CTOKEN : " + cToken);
-
-          postImage(instaUrl, cToken).then(function(cData) {
-            console.log("CDATA : " + cData);
-            foodSearch(cData).then(function(response) {
-              console.log("foodsearch : " + response);
-            });
-          });
+        getCredentials().then(function(cToken) {
+          return postImage(instaUrl, cToken);
+        }).then(function(cData) {
+          console.log("CDATA : " + cData);
+          return foodSearch(cData);
+        }).then(function(response){
+          console.log("Foodsearch : " + response)
         });
-
       });
-    
     }
 
     run();
