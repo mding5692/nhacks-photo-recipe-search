@@ -1,0 +1,29 @@
+.container { position:relative; padding:0 0 0 55px; }
+
+#sidebar {
+	position:relative;
+	width:12%;
+	height: auto;
+	background:#000;
+	display: inline-block;
+}
+
+#main {
+	position: relative;
+	border: 1px solid #000;
+	width: 80%;
+	height: auto;
+	display: inline-block;
+}
+
+.soft-button {
+	border-radius: 15px;
+	border: none;
+    background-color: #73AD21;
+    padding: 15px 32px; 
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+    display: inline-block;
+    text-align: center;
+}

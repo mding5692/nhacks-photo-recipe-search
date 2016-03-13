@@ -1,9 +1,21 @@
-<p> Welcome </p>
+<html>
+<head>
+<title>home</title>
+<link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
 
-<div ng-controller="FoodSearchCtrl">
-	<div ng-repeat="recipe in recipes">
-		<img ng-src="{{recipe.image_url}}">
-		<h2><a href="{{recipe.source_url}}">{{recipe.title}}</a></h2>
+<div class="container">
+	<div id="sidebar">
+		<button class="soft-button">Instagram</button>
+		<button class="soft-button">Pinterest</button>
+		<button class="soft-button">Favourites</button>
+	</div>	
+	<div id="main" ng-controller="FoodSearchCtrl">
+		<div ng-repeat="recipe in recipes">
+			<img ng-src="{{recipe.image_url}}">
+			<h2><a href="{{recipe.source_url}}">{{recipe.title}}</a></h2>
+		</div>
 	</div>
-
 </div>
+
+</html>
