@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": false,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node server.js"
   },
   "dependencies": {
     "bcrypt": "^0.8.5",
@@ -20,10 +20,8 @@
     "morgan": "~1.5.1",
     "node-sass-middleware": "^0.9.7",
     "node-yelp": "0.0.3",
+    "nutritionix": "^0.6.1",
     "request": "^2.69.0",
     "serve-favicon": "~2.2.0"
-  },
-  "scripts": {
-    "start": "node server.js"
   }
 }
