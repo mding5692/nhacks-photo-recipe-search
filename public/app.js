@@ -12,8 +12,12 @@
         templateUrl: "home.html",
         controller: "IndexCtrl"
       })
-      .when("/recipe/*", {
+      .when("/recipe/:recipeId", {
         templateUrl: "element.html",
+        controller: "IndexCtrl"
+      })
+      .when("/map", {
+        templateUrl: "map.html",
         controller: "IndexCtrl"
       });
 
@@ -41,8 +45,9 @@
 
 //////////////////////////////////////////////////////////////////////////////////////
   
- app.controller('IndexCtrl', function($rootScope, $scope, $routeParams, $http){
-
+ app.controller('IndexCtrl', function($rootScope, $scope, $routeParams, $http, foodTags, scrapedIngredients){
+  $scope.tags = foodTags;
+  $scope.ingredients = scrapedIngredients;
 
   });
 

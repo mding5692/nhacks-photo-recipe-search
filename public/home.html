@@ -16,11 +16,9 @@
 
 	<div ng-controller="SideBarCtrl" id="sidebar">
 		<button class="soft-button">Instagram</button>
-		<button class="soft-button">Pinterest</button>
-		<button class="soft-button">Favourites</button>
-		<button ng-click="fade()" ng-hide="fade == true" ng-repeat="tag in foodTags">
-			{{tag}}
-		</button>
+		<button ng-href="https://www.pinterest.com/search/pins/?q=food&rs=typed&0=food%7Ctyped" class="soft-button">Pinterest</button>
+		<button ng-href="/map" class="soft-button">Map Groceries!</button>
+		<button ng-repeat="tag in tags">{{tag}}</button>
 	</div>	
 	<section id="one" class="wrapper style2 spotlights">	
 		<div id="main" ng-controller="FoodSearchCtrl">
@@ -28,7 +26,7 @@
 				<img class="image" style="background-position: 50% 0%;"ng-src="{{recipe.image_url}}">
 
 						<h4>
-						<a ng-href="/element/{{recipe.title}}">					
+						<a href="/recipe/{{recipe.title}}">					
 						<div ng-class="content">
 						<div ng-class="inner">{{recipe.title}}</a>						
 						</div>
