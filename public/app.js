@@ -26,6 +26,15 @@
   app.factory('accessTokens', function() {
     return {};
   });
+
+  app.factory('foodTags', function() {
+    return [];
+  });
+
+  app.factory('scrapedIngredients', function() {
+    return {};
+  });
+
 //////////////////////////////////////////////////////////////////////////////////////
   
  app.controller('IndexCtrl', function($rootScope, $scope, $routeParams, $http){
@@ -34,7 +43,7 @@
   });
 
 ///////////////////////////// home.html
-  app.controller('FoodSearchCtrl', function($scope, $http, $location, $q, accessTokens) {
+  app.controller('FoodSearchCtrl', function($scope, $http, $location, $q, accessTokens, scrapedIngredients, foodTags) {
     var tokenList = $location.url().split("=");
     var accessToken = tokenList[1];
 
@@ -133,14 +142,47 @@
         method: 'GET'
       }).then(function(response) {
         console.log(response);
-        $scope.recipes = response.data.recipes;
-        deferred.resolve(response);
+        var body = JSON.parse(response.data.body);
+        $scope.recipes = body.recipes;
+        foodTags = response.data.body.tags;
+        deferred.resolve(body);
       });
 
       return deferred.promise;
     }
 
+    function scrapeUrls(info) {
+      var deferred = $q.defer();
+
+      for (var i = 0; i < info.count; i++) {
+        var iUrl = info.recipes[i].f2f_url;
+        var title = info.recipes[i].title;
+        var ingredients = getIngredients(iUrl);
+        scrapedIngredients[title] = ingredients;
+        console.log(scrapedIngredients);
+      }
+
+    }
+
+    function getIngredients(f2fUrl) {
+      var deferred = $q.defer();
+      var url = "http://localhost:3000/scrapeIngredients?data=" + f2fUrl;
+
+      $http({
+        url: url,
+        method: 'GET'
+      }).then(function(res) {
+        deferred.resolve(res);
+      }, function(err) {
+        console.log(err);
+      });
+
+      return deferred.promise;
+    }
+
+   
     function run() {
+      var deferred = $q.defer();
 
       getInstagramPics()
       .then( function(instaUrl) {
@@ -149,14 +191,21 @@
           return postImage(instaUrl, cToken);
         }).then(function(cData) {
           console.log("CDATA : " + cData);
+          foodTags = cData;
           return foodSearch(cData);
         }).then(function(response){
           console.log("Foodsearch : " + response)
+          deferred.resolve(response);
         });
       });
+      
+      return deferred.promise;
     }
 
-    run();
+
+    run().then(function(res) {
+      scrapeUrls(res);
+    });
 
   });
 //////////////////////// login.html
@@ -170,7 +219,6 @@
     $scope.authenticate = function() {
       var url = 'https://api.instagram.com/oauth/authorize/?client_id=' + clientID + "&redirect_uri=" + redirectURI + "&response_type=token";
       $window.open(url, "_self");
-
     };
   });
 

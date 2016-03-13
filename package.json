@@ -23,6 +23,7 @@
     "morgan": "~1.5.1",
     "node-sass-middleware": "^0.9.7",
     "node-yelp": "0.0.3",
-    "request": "^2.69.0"
+    "request": "^2.69.0",
+    "cheerio" : "latest"
   }
 }
