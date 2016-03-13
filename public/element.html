@@ -1,0 +1,28 @@
+		<link rel='stylesheet' type='text/css' href='css/main.css' />
+
+	<!-- Header -->
+			<header id="header">
+				<nav>
+					<ul>
+						<li><a ng-href="/home">Home</a></li>
+					</ul>
+				</nav>
+			</header>
+
+			<!-- Wrapper -->
+			<div id="wrapper" ng-controller="RecipeCtrl">
+
+				<!-- Main -->
+					<section id="main" class="wrapper">
+						<div class="inner">
+							<h1 class="major">{{recipe.title}}</h1>
+
+							<!-- Text -->
+								<section>
+									<h2>Ingredients!</h2>
+									<p>{{recipe.ingredients}}</p>
+
+								</section>
+							</div>
+						</section>
+				</div>

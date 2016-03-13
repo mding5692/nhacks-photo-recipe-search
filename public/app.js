@@ -4,12 +4,20 @@
 
   app.config(function ($routeProvider, $locationProvider, $stateProvider, $httpProvider, $urlRouterProvider) {
     $routeProvider
-      .when("/login",{
+      .when("/",{
         templateUrl: "login.html",
         controller: "IndexCtrl"
       })
       .when("/home", {
         templateUrl: "home.html",
+        controller: "IndexCtrl"
+      })
+      .when("/recipe/:recipeId", {
+        templateUrl: "element.html",
+        controller: "IndexCtrl"
+      })
+      .when("/map", {
+        templateUrl: "map.html",
         controller: "IndexCtrl"
       });
 
@@ -26,17 +34,28 @@
   app.factory('accessTokens', function() {
     return {};
   });
+
+  app.factory('foodTags', function() {
+    return [];
+  });
+
+  app.factory('scrapedIngredients', function() {
+    return {};
+  });
+
 //////////////////////////////////////////////////////////////////////////////////////
   
- app.controller('IndexCtrl', function($rootScope, $scope, $routeParams, $http){
-
+ app.controller('IndexCtrl', function($rootScope, $scope, $routeParams, $http, foodTags, scrapedIngredients){
+  $scope.fTags = foodTags;
+  $scope.ingredients = scrapedIngredients;
 
   });
 
 ///////////////////////////// home.html
-  app.controller('FoodSearchCtrl', function($scope, $http, $location, $q, accessTokens) {
+  app.controller('FoodSearchCtrl', function($scope, $http, $location, $q, accessTokens, scrapedIngredients, foodTags) {
     var tokenList = $location.url().split("=");
     var accessToken = tokenList[1];
+    $scope.fTags = foodTags;
 
     var foodKey = '529cd164050b80734aff7a59a2f7a0a3';
     var userId = '1662953946';
@@ -132,15 +151,52 @@
         url: 'http://localhost:3000/f2frequest?data=' + urlTags,
         method: 'GET'
       }).then(function(response) {
-        console.log(response);
-        $scope.recipes = response.data.recipes;
-        deferred.resolve(response);
+        console.log("Response: "+response);
+        var body = JSON.parse(response.data.body);
+        //var tags = JSON.parse(response.data.tags);
+        $scope.recipes = body.recipes;
+        var obj = {
+          body: body,
+          tags : tags
+        }
+        deferred.resolve(obj);
       });
 
       return deferred.promise;
     }
 
+    function scrapeUrls(info) {
+      var deferred = $q.defer();
+
+      for (var i = 0; i < info.count; i++) {
+        var iUrl = info.recipes[i].f2f_url;
+        var title = info.recipes[i].title;
+        var ingredients = getIngredients(iUrl);
+        scrapedIngredients[title] = ingredients;
+        console.log(scrapedIngredients);
+      }
+
+    }
+
+    function getIngredients(f2fUrl) {
+      var deferred = $q.defer();
+      var url = "http://localhost:3000/scrapeIngredients?data=" + f2fUrl;
+
+      $http({
+        url: url,
+        method: 'GET'
+      }).then(function(res) {
+        deferred.resolve(res);
+      }, function(err) {
+        console.log(err);
+      });
+
+      return deferred.promise;
+    }
+
+   
     function run() {
+      var deferred = $q.defer();
 
       getInstagramPics()
       .then( function(instaUrl) {
@@ -152,11 +208,18 @@
           return foodSearch(cData);
         }).then(function(response){
           console.log("Foodsearch : " + response)
+          $scope.fTags = response.tags;
+          deferred.resolve(response);
         });
       });
+      
+      return deferred.promise;
     }
 
-    run();
+
+    run().then(function(res) {
+      scrapeUrls(res.body);
+    });
 
   });
 //////////////////////// login.html
@@ -170,8 +233,14 @@
     $scope.authenticate = function() {
       var url = 'https://api.instagram.com/oauth/authorize/?client_id=' + clientID + "&redirect_uri=" + redirectURI + "&response_type=token";
       $window.open(url, "_self");
-
     };
+  });
+
+
+////////////////////// element.html
+
+  app.controller('RecipeCtrl', function($scope, $location, scrapedIngredients) {
+
   });
 
 
