@@ -6,3 +6,6 @@ NHacks Hack, take a photo of food from instagram and get the recipe
 
 
 2) npm start
+
+
+Won the NHacks 2016 Indico API Prize
